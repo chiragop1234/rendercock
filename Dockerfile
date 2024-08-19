@@ -1,23 +1,19 @@
-# Use an official Ubuntu base image
-FROM ubuntu:22.04
+# Use the latest Ubuntu image
+FROM ubuntu:latest
 
-# Set environment variables to non-interactive to avoid prompts
-ENV DEBIAN_FRONTEND=noninteractive
+# Update and install required packages
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip
 
-# Update the package list and install Cockpit from backports
-RUN . /etc/os-release && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends software-properties-common && \
-    apt-get install -y -t ${VERSION_CODENAME}-backports cockpit && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Set the working directory
+WORKDIR /app
 
-# Expose the Cockpit web interface port
-EXPOSE 9090
+# Install JupyterLab
+RUN pip3 install jupyterlab
 
-# Add a simple startup script
-RUN echo '#!/bin/bash\n/usr/libexec/cockpit-ws --no-tls\n' > /start.sh && \
-    chmod +x /start.sh
+# Expose port 8080
+EXPOSE 8080
 
-# Use ENTRYPOINT to ensure the service starts with the container
-ENTRYPOINT ["/start.sh"]
+# Start JupyterLab on port 8080 without authentication
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8080", "--no-browser", "--allow-root", "--NotebookApp.token=''
