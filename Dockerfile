@@ -14,7 +14,7 @@ RUN apt-get update && \
 EXPOSE 9090
 
 # Add a simple startup script
-RUN echo '#!/bin/bash\n/usr/libexec/cockpit-ws --no-tls\n' > /start.sh && \
+RUN echo '#!/bin/bash\n/usr/sbin/cockpit-ws --no-tls\n' > /start.sh && \
     chmod +x /start.sh
 
 # Use ENTRYPOINT to ensure the service starts with the container
