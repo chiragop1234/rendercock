@@ -13,5 +13,9 @@ RUN apt-get update && \
 # Expose the Cockpit web interface port
 EXPOSE 9090
 
-# Start the Cockpit service
-CMD ["/usr/libexec/cockpit-ws", "--no-tls"]
+# Add a simple startup script
+RUN echo '#!/bin/bash\n/usr/libexec/cockpit-ws --no-tls\n' > /start.sh && \
+    chmod +x /start.sh
+
+# Use ENTRYPOINT to ensure the service starts with the container
+ENTRYPOINT ["/start.sh"]
